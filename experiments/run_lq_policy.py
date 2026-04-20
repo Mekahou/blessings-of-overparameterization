@@ -123,7 +123,7 @@ top_quantile = 0.9
 #--------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # Running the experiments
+    # Running the experiments: acrross different nodes and different seeds
     grid_dim_hidden = np.arange(1, 8)
     results_policy_1_layer_relu = []
 
@@ -156,3 +156,48 @@ if __name__ == "__main__":
                 'results/lq/LQ_results_policy_1_layer_relu.csv', index=False
             )
 
+    # Second Experiment: fixed width, 32 , different seeds
+    results_relu_32 = []
+    for seed in range(50):
+        print(f"dim_hidden = 32 | seed = {seed}")
+        out = training_u(
+            params            = param,
+            seed              = seed,
+            dim_hidden        = 32,
+            num_layers        = 1,
+            hidden_activation = nn.ReLU
+        )
+        results_relu_32.append({
+            'seed'     : seed,
+            'u_nn'     : out['u_nn'].tolist(),
+            'u_theory' : out['u_theory'].tolist(),
+            'Y_test'   : out['Y_test'].tolist(),
+        })
+        pd.DataFrame(results_relu_32).to_csv(
+            'results/lq/LQ_results_policy_1_layer_relu_dim_hidden_32.csv', index=False
+        )
+
+    # Third Experiment: fixed width, 3 , different seeds
+    results_relu_3 = []
+    for seed in range(50):
+        print(f"dim_hidden = 3 | seed = {seed}")
+        out = training_u(
+            params            = param,
+            seed              = seed,
+            dim_hidden        = 3,
+            num_layers        = 1,
+            hidden_activation = nn.ReLU
+        )
+        results_relu_3.append({
+            'seed'     : seed,
+            'u_nn'     : out['u_nn'].tolist(),
+            'u_theory' : out['u_theory'].tolist(),
+            'Y_test'   : out['Y_test'].tolist(),
+        })
+        pd.DataFrame(results_relu_3).to_csv(
+            'results/lq/LQ_results_policy_1_layer_relu_dim_hidden_3.csv', index=False
+        )
+
+    
+
+        
