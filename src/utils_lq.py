@@ -111,12 +111,31 @@ def test_data_u(params, time_period):
 # ---------------------------------------------------------------------
 
 # Test data generation for evaluation of the value function
-def test_data_v(params, u_theta, time_period):
-    """Simulate the (y_hat, Y) path using the NN policy u_theta."""
+def test_data_v(params, time_period):
+    """Simulate the (y_hat, Y) path using the true LQ policy."""
     y_0 = params['y_0']
     Y_0 = params['Y_0']
     h_0 = params['h_0']
     h_1 = params['h_1']
+
+    beta    = params['beta']
+    alpha_0 = params['alpha_0']
+    alpha_1 = params['alpha_1']
+    gamma   = params['gamma']
+
+    R = np.matrix([[0.0, -alpha_0/2, 0.0],
+                   [-alpha_0/2, 0.0, alpha_1/2],
+                   [0.0, alpha_1/2, 0.0]])
+    Q = gamma / 2
+    A = np.matrix([[1.0, 0.0, 0.0],
+                   [0.0, 1.0, 0.0],
+                   [h_0, 0.0, h_1]])
+    B = np.matrix([[0.0], [1.0], [0.0]])
+
+    lq = LQ(Q, R, A, B, beta=beta)
+    P, F, d = lq.stationary_values()
+
+    F_tens = torch.tensor(F, dtype=torch.float32)
 
     y_hat_t = torch.zeros(time_period, 1)
     Y_t     = torch.zeros(time_period, 1)
@@ -127,16 +146,13 @@ def test_data_v(params, u_theta, time_period):
     for t in range(1, time_period):
         Y_t[t] = h_0 + h_1 * Y_t[t - 1]
 
-    u_theta.eval()
-    with torch.no_grad():
-        u_hat_t = u_theta(Y_t)
-
     for t in range(1, time_period):
-        y_hat_t[t] = y_hat_t[t - 1] + u_hat_t[t - 1]
+        x_t = torch.tensor([[1.0], [y_hat_t[t-1].item()], [Y_t[t-1].item()]])
+        u_t = -(F_tens @ x_t)
+        y_hat_t[t] = y_hat_t[t-1] + u_t[0]
 
     yY_t = torch.cat((y_hat_t, Y_t), dim=1)
     return yY_t, y_hat_t, Y_t
-
 #---------------------------------------------------------------------
 # Euler Residuals
 def euler_residual(params, u_theta, Y):
