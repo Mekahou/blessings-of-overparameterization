@@ -1,3 +1,5 @@
+https://github.com/user-attachments/assets/b589a5e9-cf63-4cb0-be96-02e480bbf38d
+
 # The Blessings of Overparameterization: Applications in Solving Economic Models
 
 This repository contains the code and results for the paper:
