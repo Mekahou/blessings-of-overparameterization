@@ -4,7 +4,7 @@ This repository contains the code and results for the paper:
 
 > **The Blessings of Overparameterization: Applications in Solving Economic Models**
 
-We study how overparameterized neural networks behave when used to solve dynamic economic models via the Euler equation. Across three canonical models — Linear-Quadratic (LQ), McCall job search, and Real Business Cycle (RBC) — we document that larger networks systematically produce better approximations, consistent with the double descent phenomenon from the machine learning literature.
+We study how overparameterized neural networks behave when used to solve dynamic economic models via the Euler and Bellman equations. Across three canonical models, Linear-Quadratic (LQ), McCall job search, and Real Business Cycle (RBC), we document that larger networks systematically produce better approximations.
 
 ---
 
